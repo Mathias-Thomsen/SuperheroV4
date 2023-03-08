@@ -17,6 +17,10 @@ public class SuperheroService {
 
 
     public List<Superhero> getSuperheros() {
-        return repository.getSuperhero();
+        return repository.getSuperheroes();
+    }
+
+    public Superhero getSuperhero(String superheroName) {
+        return repository.getSuperhero(superheroName);
     }
 }

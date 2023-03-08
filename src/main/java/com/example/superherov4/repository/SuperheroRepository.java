@@ -22,24 +22,43 @@ public class SuperheroRepository {
     private String pwd;
 
 
-    public List<Superhero> getSuperhero() {
+    public List<Superhero> getSuperheroes() {
         List<Superhero> superheroes = new ArrayList<Superhero>();
         try (Connection con = DriverManager.getConnection(db_url, uid, pwd)) {
-            String SQL = "SELECT * FROM superhero;";
+            String SQL = "SELECT superhero_id, superhero_name, reel_name, creation_year FROM superhero;";
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(SQL);
             while (rs.next()) {
                 int ID = rs.getInt("superhero_id");
                 String superheroName = rs.getString("superhero_name");
                 String reelName = rs.getString("reel_name");
-                boolean isHuman = rs.getBoolean("is_human");
-                String superpower = rs.getString("superpower");
                 int creationYear = rs.getInt("creation_year");
-                double powerlevel = rs.getDouble("powerlevel");
-                String city = rs.getString("city");
-                superheroes.add(new Superhero(ID, superheroName, reelName, isHuman, superpower, creationYear, powerlevel, city));
+                superheroes.add(new Superhero(ID, superheroName, reelName, creationYear));
             }
             return superheroes;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Superhero getSuperhero(String superhero) {
+        Superhero superhero1 = null;
+
+        try (Connection con = DriverManager.getConnection(db_url, uid, pwd)) {
+            String SQL = "SELECT superhero_id, superhero_name, reel_name, creation_year FROM superhero WHERE superhero_name = ?;";
+            PreparedStatement pstmt = con.prepareStatement(SQL);
+            pstmt.setString(1, superhero);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int ID = rs.getInt("superhero_id");
+                String superheroName = rs.getString("superhero_name");
+                String reelName = rs.getString("reel_name");
+                int creationYear = rs.getInt("creation_year");
+                superhero1 = (new Superhero(ID, superheroName, reelName, creationYear));
+            }
+            return superhero1;
+
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -18,15 +18,18 @@ public class SuperheroController {
 
     public SuperheroController(SuperheroService superheroService) {
         this.superheroService = superheroService;
-
     }
-
-
     @GetMapping(path = "superhero") //localhost:8080/kea/superhero
     public ResponseEntity<List<Superhero>> getSuperheroes() {
         List<Superhero> superheroList = superheroService.getSuperheros();
-
         return new ResponseEntity<List<Superhero>>(superheroList, HttpStatus.OK);
+
+    }
+
+    @GetMapping(path = "superhero/{superheroName}") //localhost:8080/kea/superhero
+    public ResponseEntity<Superhero> getSuperhero(@PathVariable String superheroName) {
+        Superhero superhero = superheroService.getSuperhero(superheroName);
+        return new ResponseEntity<Superhero>(superhero, HttpStatus.OK);
 
     }
 
