@@ -6,9 +6,7 @@ import com.example.superherov4.dto.SuperpowerDTO;
 import com.example.superherov4.model.Superhero;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Repository("stubRepository")
 public class StubRepository implements IRepository {
@@ -52,6 +50,7 @@ public class StubRepository implements IRepository {
     private List<CountPowerDTO> listOfSuperheroNameAndSumPower = new ArrayList<>();
     private List<CityDTO> cityAndSuperheroName = new ArrayList<>();
 
+
     @Override
     public List<Superhero> getSuperheroes(){
         List<Superhero> searchResults = new ArrayList<>();
@@ -72,27 +71,23 @@ public class StubRepository implements IRepository {
         return superhero1;
     }
     @Override
-    public List<CountPowerDTO> getSuperpowerCount(){
-
-        CountPowerDTO countPowerDTO = null;
-        int starPower = 1;
-        for(CountPowerDTO superpower : sumPower){
-            if(listOfSuperheroNameAndSumPower.contains(superpower)){
-                int power = superpower.getPower();
-                superpower.setPower(power +1);
-            }else {
-                countPowerDTO = new CountPowerDTO(superpower.getSuperheroName(), starPower);
+    public List<CountPowerDTO> getSuperpowerCount() {
+        Map<String, CountPowerDTO> superheroPowerMap = new HashMap<>();
+        int startPower = 1;
+        for (CountPowerDTO powerDTO : sumPower) {
+            String superheroName = powerDTO.getSuperheroName();
+            if (superheroPowerMap.containsKey(superheroName)) {
+                superheroPowerMap.get(superheroName).setPower(superheroPowerMap.get(superheroName).getPower() + 1);
+            } else {
+                superheroPowerMap.put(superheroName, new CountPowerDTO(superheroName, startPower));
             }
-            listOfSuperheroNameAndSumPower.add(countPowerDTO);
         }
-
-        return listOfSuperheroNameAndSumPower;
-
+        return new ArrayList<>(superheroPowerMap.values());
     }
     @Override
     public CountPowerDTO getCountPowerSuperheroName(String superheroName){
         CountPowerDTO countPowerDTO = null;
-        for (CountPowerDTO superhero : listOfSuperheroNameAndSumPower){
+        for (CountPowerDTO superhero : getSuperpowerCount()){
             if(superhero.getSuperheroName().equals(superheroName)){
                 countPowerDTO = superhero;
             }
@@ -104,7 +99,7 @@ public class StubRepository implements IRepository {
 
         CityDTO city1 = null;
         for (CityDTO city : cities) {
-            city1 = new CityDTO(city.getCity(), city.getSuperheroName());
+            city1 = new CityDTO(city.getSuperheroName(), city.getCity());
             cityAndSuperheroName.add(city1);
         }
         return cityAndSuperheroName;
